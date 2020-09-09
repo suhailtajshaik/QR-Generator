@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>basic example</title>
+</head>
+
+<body>
+
+	<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script>
+	<script type="text/javascript" src="../src/jquery.qrcode.js"></script>
+	<script type="text/javascript" src="../src/qrcode.js"></script>
+
+	<h1>Generate QR</h1>
+	<form name="myform" id="myform">
+		<div>
+			<div>
+				<label for="website">Generate QR code for URL</label>
+			</div>
+			<div>
+				<input type="url" id="website" name="website" placeholder="Enter URL">
+				<input type="button" id="submit" name="submit" value="Submit" onclick="generateQR()" />
+				<input type="button" id="download" name="download" value="Download" onclick="downloadQR()" />
+			</div>
+		</div>
+	</form>
+
+	<div style="display: inline-block; padding: 50px;" id="qrcodeCanvas"></div>
+	<script>
+		let QR = document.getElementById('qrcodeCanvas');
+		const canvas2png = (canvas) => {
+			var image = new Image();
+			image.src = canvas.toDataURL("image/png");
+			return image;
+		}
+
+		const downloadQR = () => {
+			html2canvas(document.querySelector("#qrcodeCanvas")).then(canvas => {
+				const imageToPrint = canvas2png(canvas);
+				let a = document.createElement('A');
+				a.href = imageToPrint.src;
+				a.download = 'QR code';
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			});
+		}
+		const generateQR = () => {
+			let form = document.forms.myform;
+			if (QR.childNodes.length <= 0) {
+				let QrPayload = form.website.value.toString();
+				if (!form.website.value) {
+					QrPayload = 'https://suhailtaj.com';
+				}
+				jQuery('#qrcodeCanvas').qrcode({
+					text: QrPayload
+				});
+			}
+		}
+	</script>
+
+</body>
+
+</html>
